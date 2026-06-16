@@ -1,29 +1,29 @@
 // ==========================================
-// 古文用言 神経衰弱 - メインプログラム (app.js)
+// メモリーマッチ！カスタム暗記カード - メインプログラム (app.js)
 // ==========================================
 
-// --- デモ用 既定の古文用言データ ---
+// --- デモ用 既定の一般暗記データ (英単語) ---
 const DEMO_WORDS = [
-  { id: 1, word: "あり", meaning: "存在する、ある、生きている", pos: "動詞", type: "ラ行変格活用", conjugations: { mizen: "あら", renyo: "あり", shushi: "あり", rentai: "ある", izen: "あれ", meirei: "あれ" } },
-  { id: 2, word: "をり", meaning: "存在する、居る、生きて生活する", pos: "動詞", type: "ラ行変格活用", conjugations: { mizen: "をら", renyo: "をり", shushi: "をり", rentai: "をる", izen: "をれ", meirei: "をれ" } },
-  { id: 3, word: "はべる", meaning: "お仕えする、ございます", pos: "動詞", type: "ラ行変格活用", conjugations: { mizen: "はべら", renyo: "はべり", shushi: "はべる", rentai: "はべる", izen: "はべれ", meirei: "はべれ" } },
-  { id: 4, word: "いますかり", meaning: "いらっしゃる、おいでになる", pos: "動詞", type: "ラ行変格活用", conjugations: { mizen: "いますから", renyo: "いますかり", shushi: "いますかり", rentai: "いますかる", izen: "いますかれ", meirei: "いますかれ" } },
-  { id: 5, word: "おどろく", meaning: "（はっと）気づく、目を覚ます", pos: "動詞", type: "カ行四段活用", conjugations: { mizen: "おどろか", renyo: "おどろき", shushi: "おどろく", rentai: "おどろく", izen: "おどろけ", meirei: "おどろけ" } },
-  { id: 6, word: "ののしる", meaning: "大声で騒ぐ、評判になる、羽振りをきかす", pos: "動詞", type: "ラ行四段活用", conjugations: { mizen: "ののしら", renyo: "ののしり", shushi: "ののしる", rentai: "ののしる", izen: "ののしれ", meirei: "ののしれ" } },
-  { id: 7, word: "めづ", meaning: "愛する、褒める、心惹かれる", pos: "動詞", type: "ダ行下二段活用", conjugations: { mizen: "めで", renyo: "めで", shushi: "めづ", rentai: "むづる", izen: "むづれ", meirei: "めだよ" } },
-  { id: 8, word: "おぼゆ", meaning: "（自然と）思われる、似ている、思い出す", pos: "動詞", type: "ヤ行下二段活用", conjugations: { mizen: "おぼえ", renyo: "おぼえ", shushi: "おぼゆ", rentai: "おぼゆる", izen: "おぼゆれ", meirei: "おぼえよ" } },
-  { id: 9, word: "しのぶ", meaning: "我慢する、人目を避ける、懐かしむ", pos: "動詞", type: "ハ行四段活用", conjugations: { mizen: "しのば", renyo: "しのび", shushi: "しのぶ", rentai: "しのぶ", izen: "しのべ", meirei: "しのべ" } },
-  { id: 10, word: "おこたる", meaning: "病気がよくなる、快復する、怠ける", pos: "動詞", type: "ラ行四段活用", conjugations: { mizen: "おこたら", renyo: "おこたり", shushi: "おこたる", rentai: "おこたる", izen: "おこたれ", meirei: "おこたれ" } },
-  { id: 11, word: "あふ", meaning: "結婚する、めぐり合う", pos: "動詞", type: "ハ行四段活用", conjugations: { mizen: "あは", renyo: "あひ", shushi: "あふ", rentai: "あふ", izen: "あへ", meirei: "あへ" } },
-  { id: 12, word: "うつろふ", meaning: "色あせる、散る、心変わりする", pos: "動詞", type: "ハ行四段活用", conjugations: { mizen: "うつろは", renyo: "うつろひ", shushi: "うつろふ", rentai: "うつろふ", izen: "うつろへ", meirei: "うつろへ" } },
-  { id: 13, word: "うつくし", meaning: "かわいらしい、いとしい、見事だ", pos: "形容詞", type: "シク活用", conjugations: { mizen: "うつくしか", renyo: "うつくしく", shushi: "うつくし", rentai: "うつくしき", izen: "うつくしけれ", meirei: "○" } },
-  { id: 14, word: "かなし", meaning: "愛おしい、かわいい、悲しい", pos: "形容詞", type: "シク活用", conjugations: { mizen: "かなしか", renyo: "かなしく", shushi: "かなし", rentai: "かなしき", izen: "かなしけれ", meirei: "○" } },
-  { id: 15, word: "いみじ", meaning: "たいそう、素晴らしい、ひどい", pos: "形容詞", type: "シク活用", conjugations: { mizen: "いみじか", renyo: "いみじく", shushi: "いみじ", rentai: "いみじき", izen: "いみじけれ", meirei: "○" } },
-  { id: 16, word: "をかし", meaning: "趣がある、美しい、滑稽だ", pos: "形容詞", type: "ク活用", conjugations: { mizen: "をかしか", renyo: "をかしく", shushi: "をかし", rentai: "をかしき", izen: "をかしけれ", meirei: "○" } },
-  { id: 17, word: "あやし", meaning: "不思議だ、身分が低い、見苦しい", pos: "形容詞", type: "シク活用", conjugations: { mizen: "あやしか", renyo: "あやしく", shushi: "あやし", rentai: "あやしき", izen: "あやしけれ", meirei: "○" } },
-  { id: 18, word: "すさまじ", meaning: "興ざめだ、殺風景だ、ひどい", pos: "形容詞", type: "シク活用", conjugations: { mizen: "すさまじか", renyo: "すさまじく", shushi: "すさまじ", rentai: "すさまじき", izen: "すさまじけれ", meirei: "○" } },
-  { id: 19, word: "あてなり", meaning: "身分が高い、高貴だ、上品だ", pos: "形容動詞", type: "ナリ活用", conjugations: { mizen: "あてなら", renyo: "あてなり", shushi: "あてなり", rentai: "あてなる", izen: "あてなれ", meirei: "あてなれ" } },
-  { id: 20, word: "いうなり", meaning: "優美だ、上品だ、上手だ", pos: "形容動詞", type: "ナリ活用", conjugations: { mizen: "いうなら", renyo: "いうなり", shushi: "いうなり", rentai: "いうなる", izen: "いうなれ", meirei: "いうなれ" } }
+  { id: 1, word: "apple", meaning: "りんご", pos: "名詞", type: "フルーツ" },
+  { id: 2, word: "book", meaning: "本、書籍", pos: "名詞", type: "勉強" },
+  { id: 3, word: "run", meaning: "走る、稼働する", pos: "動詞", type: "運動" },
+  { id: 4, word: "beautiful", meaning: "美しい、素晴らしい", pos: "形容詞", type: "状態" },
+  { id: 5, word: "happy", meaning: "幸せな、うれしい", pos: "形容詞", type: "感情" },
+  { id: 6, word: "cat", meaning: "猫", pos: "名詞", type: "動物" },
+  { id: 7, word: "dog", meaning: "犬", pos: "名詞", type: "動物" },
+  { id: 8, word: "drink", meaning: "飲む、飲み物", pos: "動詞", type: "日常" },
+  { id: 9, word: "eat", meaning: "食べる", pos: "動詞", type: "日常" },
+  { id: 10, word: "large", meaning: "大きい、広い", pos: "形容詞", type: "サイズ" },
+  { id: 11, word: "small", meaning: "小さい、わずかな", pos: "形容詞", type: "サイズ" },
+  { id: 12, word: "school", meaning: "学校", pos: "名詞", type: "勉強" },
+  { id: 13, word: "teacher", meaning: "先生、教師", pos: "名詞", type: "勉強" },
+  { id: 14, word: "music", meaning: "音楽", pos: "名詞", type: "芸術" },
+  { id: 15, word: "write", meaning: "書く、執筆する", pos: "動詞", type: "勉強" },
+  { id: 16, word: "read", meaning: "読む、読書する", pos: "動詞", type: "勉強" },
+  { id: 17, word: "red", meaning: "赤、赤い", pos: "名詞", type: "色彩" },
+  { id: 18, word: "blue", meaning: "青、青い", pos: "名詞", type: "色彩" },
+  { id: 19, word: "water", meaning: "水", pos: "名詞", type: "自然" },
+  { id: 20, word: "friend", meaning: "友達、友人", pos: "名詞", type: "日常" }
 ];
 
 // --- グローバル状態管理 (State) ---
@@ -41,7 +41,7 @@ let gameState = {
   isProcessing: false,            // フリップ後の判定待機中（連打防止）
   matchedPairs: [],               // マッチした単語データのリスト（振り返り用）
   sideAColumn: "word",            // A面カラムキー (デフォルト: 単語)
-  sideBColumn: "type"             // B面カラムキー (デフォルト: 活用の種類)
+  sideBColumn: "meaning"          // B面カラムキー (デフォルト: 意味)
 };
 
 // --- DOM 要素の取得 ---
@@ -145,7 +145,7 @@ function setupEventListeners() {
         } catch (e) {}
       }
       kobunWords = [...DEMO_WORDS];
-      updateDataStatus(true, "デモデータ（動詞・形容詞など）を使用中");
+      updateDataStatus(true, "デモデータ（英単語）を使用中");
       updateColumnsFromData(kobunWords);
     }
   });
@@ -198,7 +198,7 @@ async function testAndLoadGasData(url) {
     if (Array.isArray(data) && data.length > 0) {
       kobunWords = data;
       localStorage.setItem("kobun-yogen-gas-url", url);
-      updateDataStatus(true, `接続成功: ${data.length}件の古文用言データをロードしました`, "success");
+      updateDataStatus(true, `接続成功: ${data.length}件の暗記データをロードしました`, "success");
       updateColumnsFromData(data);
     } else if (data.status === "error" || data.error) {
       throw new Error(data.message || data.error);
@@ -280,7 +280,7 @@ function startNewGame() {
       dom.turnAnnouncement.textContent = "プレイヤー1の番です。";
     } else {
       dom.p2ScoreCard.style.display = "none";
-      dom.p1NameDisplay.textContent = "学習者";
+      dom.p1NameDisplay.textContent = "1人プレイ";
       dom.p1ScoreCard.className = "player-score";
       dom.timerScoreCard.style.display = "flex";
       dom.turnAnnouncement.textContent = "カードを選んでください。";
@@ -323,7 +323,7 @@ function restartGame() {
 // カードの生成とシャッフル、レンダリング
 function generateAndRenderCards() {
   if (!kobunWords || kobunWords.length === 0) {
-    throw new Error("用言データ（kobunWords）が空か読み込まれていません。");
+    throw new Error("暗記データ（kobunWords）が空か読み込まれていません。");
   }
   
   // 1. 全データからランダムに指定されたペア数分の用言データを抽出
@@ -331,7 +331,7 @@ function generateAndRenderCards() {
   const selectedWords = shuffledWords.slice(0, gameState.numPairs);
   
   if (selectedWords.length === 0) {
-    throw new Error("選択された用言カードのペア数が0件です。");
+    throw new Error("選択されたカードのペア数が0件です。");
   }
   
   // 2. ペアカードリストの作成
@@ -374,13 +374,13 @@ function generateAndRenderCards() {
     
     cardEl.innerHTML = `
       <div class="card-inner">
-        <!-- 裏面：和風 -->
+        <!-- 裏面：ポップ -->
         <div class="card-back">
           <div class="card-back-pattern">
-            <i class="fa-solid fa-seedling"></i>
+            <i class="fa-solid fa-graduation-cap"></i>
           </div>
         </div>
-        <!-- 表面：和紙 -->
+        <!-- 表面：クリーン -->
         <div class="card-front">
           <span class="${badgeClass}">${badgeLabel}</span>
           <div class="${textClass}">${escapeHtml(card.text || "")}</div>
@@ -668,7 +668,7 @@ function closeModal() {
 
 // --- テンプレートダウンロード機能 ---
 function downloadTemplate() {
-  const CSV_HEADERS = ["ID", "単語（見出し語）", "意味（現代語訳）", "品詞", "活用の種類", "未然形", "連用形", "終止形", "連体形", "已然形", "命令形"];
+  const CSV_HEADERS = ["ID", "単語", "意味", "品詞", "分類"];
   
   // デモデータをテンプレートのサンプル行として出力する
   const csvRows = [CSV_HEADERS.join(",")];
@@ -679,13 +679,7 @@ function downloadTemplate() {
       escapeCsvField(w.word),
       escapeCsvField(w.meaning),
       escapeCsvField(w.pos),
-      escapeCsvField(w.type),
-      escapeCsvField(w.conjugations.mizen),
-      escapeCsvField(w.conjugations.renyo),
-      escapeCsvField(w.conjugations.shushi),
-      escapeCsvField(w.conjugations.rentai),
-      escapeCsvField(w.conjugations.izen),
-      escapeCsvField(w.conjugations.meirei)
+      escapeCsvField(w.type)
     ];
     csvRows.push(row.join(","));
   });
@@ -699,7 +693,7 @@ function downloadTemplate() {
   if (link.download !== undefined) {
     const url = URL.createObjectURL(blob);
     link.setAttribute("href", url);
-    link.setAttribute("download", "古文用言_神経衰弱_問題テンプレート.csv");
+    link.setAttribute("download", "カスタム暗記_神経衰弱_問題テンプレート.csv");
     link.style.visibility = 'hidden';
     document.body.appendChild(link);
     link.click();
