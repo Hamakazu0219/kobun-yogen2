@@ -39,7 +39,9 @@ let gameState = {
   timerSeconds: 0,                // 経過秒数
   timerInterval: null,            // タイマー用インターバル
   isProcessing: false,            // フリップ後の判定待機中（連打防止）
-  matchedPairs: []                // マッチした単語データのリスト（振り返り用）
+  matchedPairs: [],               // マッチした単語データのリスト（振り返り用）
+  sideAColumn: "word",            // A面カラムキー (デフォルト: 単語)
+  sideBColumn: "type"             // B面カラムキー (デフォルト: 活用の種類)
 };
 
 // --- DOM 要素の取得 ---
@@ -94,6 +96,7 @@ const dom = {
 // --- 初期イベント設定 ---
 document.addEventListener("DOMContentLoaded", () => {
   setupEventListeners();
+  renderColumnSelectButtons(); // 組み合わせ選択ボタンの初期描画
   
   // ローカルストレージからGASのURLまたはカスタムアップロードデータがあれば読み込み
   const savedUrl = localStorage.getItem("kobun-yogen-gas-url");
@@ -275,7 +278,7 @@ function startNewGame() {
     }
     
     // モードバッジの表示
-    dom.currentModeBadge.textContent = "単語 ⇔ 活用の種類";
+    dom.currentModeBadge.textContent = `${getColumnName(gameState.sideAColumn)} ⇔ ${getColumnName(gameState.sideBColumn)}`;
     
     // グリッドサイズクラスの適用
     dom.cardGrid.className = "card-grid";
@@ -325,20 +328,19 @@ function generateAndRenderCards() {
   // 2. ペアカードリストの作成
   const rawCards = [];
   selectedWords.forEach((wordData) => {
-    // A面: 単語カード
+    // A面: カード
     rawCards.push({
       pairId: wordData.id,
-      type: "word",
-      text: wordData.word,
+      type: "sideA",
+      text: getColumnValue(wordData, gameState.sideAColumn),
       data: wordData
     });
     
-    // B面: 対になるカード（活用の種類）
+    // B面: 対になるカード
     rawCards.push({
       pairId: wordData.id,
-      type: "type",
-      text: wordData.type,
-      subInfo: wordData.pos,
+      type: "sideB",
+      text: getColumnValue(wordData, gameState.sideBColumn),
       data: wordData
     });
   });
@@ -358,8 +360,8 @@ function generateAndRenderCards() {
     const textClass = (card.text || "").length > 8 ? "card-text text-long" : "card-text";
     
     // バッジ名の定義
-    const badgeLabel = card.type === "word" ? "単語" : "活用種";
-    const badgeClass = `card-type-badge badge-${card.type}`;
+    const badgeLabel = card.type === "sideA" ? getColumnName(gameState.sideAColumn) : getColumnName(gameState.sideBColumn);
+    const badgeClass = `card-type-badge ${card.type === "sideA" ? "badge-word" : "badge-type"}`;
     
     cardEl.innerHTML = `
       <div class="card-inner">
@@ -417,9 +419,14 @@ function checkMatch() {
   const c1 = gameState.cards[idx1];
   const c2 = gameState.cards[idx2];
   
-  // タイプ（単語カードと活用の種類カード）が異なり、かつ活用の種類（type）が一致していればマッチ
-  // （例: 「あり」[ラ行変格活用] と 他のカード由来の「ラ行変格活用」も正解とする）
-  const isMatch = (c1.type !== c2.type) && (c1.data.type === c2.data.type);
+  // カードの面（sideAとsideB）が異なること
+  const isDifferentType = c1.type !== c2.type;
+  
+  // B面で選択されているカラムのデータ値が一致しているか判定
+  // （例: A面が単語「あり」、B面が「活用の種類」のとき、c1.dataの活用の種類は「ラ行変格活用」、c2.dataの活用の種類も「ラ行変格活用」となり、一致する）
+  const val1 = getColumnValue(c1.data, gameState.sideBColumn);
+  const val2 = getColumnValue(c2.data, gameState.sideBColumn);
+  const isMatch = isDifferentType && (val1 === val2);
   
   if (isMatch) {
     // マッチ成功
@@ -795,6 +802,70 @@ function escapeHtml(str) {
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#039;");
+}
+
+// --- 動的組み合わせ選択用の定義とヘルパー ---
+const COLUMN_KEYS = [
+  { key: "word", name: "単語" },
+  { key: "meaning", name: "意味" },
+  { key: "pos", name: "品詞" },
+  { key: "type", name: "活用の種類" },
+  { key: "mizen", name: "未然形" },
+  { key: "renyo", name: "連用形" },
+  { key: "shushi", name: "終止形" },
+  { key: "rentai", name: "連体形" },
+  { key: "izen", name: "已然形" },
+  { key: "meirei", name: "命令形" }
+];
+
+// カラム選択ボタンの動的生成
+function renderColumnSelectButtons() {
+  const sideAContainer = document.getElementById("side-a-buttons");
+  const sideBContainer = document.getElementById("side-b-buttons");
+  
+  if (!sideAContainer || !sideBContainer) return;
+  
+  sideAContainer.innerHTML = "";
+  sideBContainer.innerHTML = "";
+  
+  COLUMN_KEYS.forEach(col => {
+    // A面ボタン
+    const btnA = document.createElement("button");
+    btnA.type = "button";
+    btnA.className = `column-btn ${gameState.sideAColumn === col.key ? 'active' : ''}`;
+    btnA.textContent = col.name;
+    btnA.addEventListener("click", () => {
+      gameState.sideAColumn = col.key;
+      renderColumnSelectButtons();
+    });
+    sideAContainer.appendChild(btnA);
+    
+    // B面ボタン
+    const btnB = document.createElement("button");
+    btnB.type = "button";
+    btnB.className = `column-btn ${gameState.sideBColumn === col.key ? 'active' : ''}`;
+    btnB.textContent = col.name;
+    btnB.addEventListener("click", () => {
+      gameState.sideBColumn = col.key;
+      renderColumnSelectButtons();
+    });
+    sideBContainer.appendChild(btnB);
+  });
+}
+
+// カラムの値を取得するヘルパー
+function getColumnValue(wordData, columnKey) {
+  if (!wordData) return "";
+  if (wordData.conjugations && wordData.conjugations[columnKey] !== undefined) {
+    return wordData.conjugations[columnKey];
+  }
+  return wordData[columnKey] || "";
+}
+
+// カラムの表示名を取得するヘルパー
+function getColumnName(key) {
+  const col = COLUMN_KEYS.find(c => c.key === key);
+  return col ? col.name : "";
 }
 
 
