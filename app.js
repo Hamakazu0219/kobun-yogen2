@@ -96,7 +96,6 @@ const dom = {
 // --- 初期イベント設定 ---
 document.addEventListener("DOMContentLoaded", () => {
   setupEventListeners();
-  renderColumnSelectButtons(); // 組み合わせ選択ボタンの初期描画
   
   // ローカルストレージからGASのURLまたはカスタムアップロードデータがあれば読み込み
   const savedUrl = localStorage.getItem("kobun-yogen-gas-url");
@@ -111,11 +110,17 @@ document.addEventListener("DOMContentLoaded", () => {
       if (Array.isArray(parsed) && parsed.length > 0) {
         kobunWords = parsed;
         updateDataStatus(true, `ロード成功: アップロードされた${parsed.length}件のデータを使用中`, "success");
+        updateColumnsFromData(parsed);
+      } else {
+        updateColumnsFromData(kobunWords);
       }
     } catch (e) {
       console.error("ローカルカスタムデータの読み込み失敗:", e);
       localStorage.removeItem("kobun-yogen-custom-data");
+      updateColumnsFromData(kobunWords);
     }
+  } else {
+    updateColumnsFromData(kobunWords);
   }
 });
 
@@ -135,11 +140,13 @@ function setupEventListeners() {
         try {
           kobunWords = JSON.parse(savedCustomData);
           updateDataStatus(true, `ロード成功: アップロードされた${kobunWords.length}件のデータを使用中`, "success");
+          updateColumnsFromData(kobunWords);
           return;
         } catch (e) {}
       }
       kobunWords = [...DEMO_WORDS];
       updateDataStatus(true, "デモデータ（動詞・形容詞など）を使用中");
+      updateColumnsFromData(kobunWords);
     }
   });
 
@@ -192,6 +199,7 @@ async function testAndLoadGasData(url) {
       kobunWords = data;
       localStorage.setItem("kobun-yogen-gas-url", url);
       updateDataStatus(true, `接続成功: ${data.length}件の古文用言データをロードしました`, "success");
+      updateColumnsFromData(data);
     } else if (data.status === "error" || data.error) {
       throw new Error(data.message || data.error);
     } else {
@@ -201,6 +209,7 @@ async function testAndLoadGasData(url) {
     console.error("GASデータロードエラー:", error);
     kobunWords = [...DEMO_WORDS]; // エラー時はデモデータに戻す
     updateDataStatus(true, `接続失敗（デモデータを使用中）: ${error.message}`, "error");
+    updateColumnsFromData(kobunWords);
   }
 }
 
@@ -580,31 +589,77 @@ function handleGameOver() {
 
 // 振り返りテーブルのレンダリング
 function renderReviewTable() {
-  dom.reviewList.innerHTML = "";
+  const headersRow = document.getElementById("review-table-headers");
+  const reviewList = document.getElementById("review-list");
+  if (!headersRow || !reviewList) return;
   
-  // ID順に並び替え
-  const sortedPairs = [...gameState.matchedPairs].sort((a, b) => a.id - b.id);
+  headersRow.innerHTML = "";
+  reviewList.innerHTML = "";
   
-  sortedPairs.forEach(word => {
-    const tr = document.createElement("tr");
-    
-    // 主要な活用形の要約（未然、連用、終止、連体）
-    const conjSummary = `
-      未然: ${escapeHtml(word.conjugations.mizen) || "○"}<br>
-      連用: ${escapeHtml(word.conjugations.renyo) || "○"}<br>
-      終止: ${escapeHtml(word.conjugations.shushi) || "○"}<br>
-      連体: ${escapeHtml(word.conjugations.rentai) || "○"}
+  // Check if we are using the standard classical Japanese structure
+  const hasStandardKeys = COLUMN_KEYS.some(c => c.key === "word") && COLUMN_KEYS.some(c => c.key === "type");
+  const hasConjugations = COLUMN_KEYS.some(c => ["mizen", "renyo", "shushi", "rentai"].includes(c.key));
+  
+  if (hasStandardKeys) {
+    // Render standard Classical Japanese headers
+    headersRow.innerHTML = `
+      <th>単語 (基本形)</th>
+      <th>品詞 / 活用の種類</th>
+      <th>代表的な意味</th>
+      ${hasConjugations ? '<th>主要な活用形</th>' : ''}
     `;
     
-    tr.innerHTML = `
-      <td>${escapeHtml(word.word)}</td>
-      <td>${escapeHtml(word.pos)}<br><small style="color:var(--color-text-muted)">${escapeHtml(word.type)}</small></td>
-      <td>${escapeHtml(word.meaning)}</td>
-      <td style="font-size:0.8rem; line-height:1.4">${conjSummary}</td>
-    `;
+    const sortedPairs = [...gameState.matchedPairs].sort((a, b) => a.id - b.id);
     
-    dom.reviewList.appendChild(tr);
-  });
+    sortedPairs.forEach(word => {
+      const tr = document.createElement("tr");
+      
+      let conjSummary = "";
+      if (hasConjugations) {
+        const c = word.conjugations || {};
+        conjSummary = `
+          <td>
+            未然: ${escapeHtml(c.mizen || word.mizen) || "○"}<br>
+            連用: ${escapeHtml(c.renyo || word.renyo) || "○"}<br>
+            終止: ${escapeHtml(c.shushi || word.shushi) || "○"}<br>
+            連体: ${escapeHtml(c.rentai || word.rentai) || "○"}
+          </td>
+        `;
+      }
+      
+      const wordVal = getColumnValue(word, "word");
+      const posVal = getColumnValue(word, "pos");
+      const typeVal = getColumnValue(word, "type");
+      const meaningVal = getColumnValue(word, "meaning");
+      
+      tr.innerHTML = `
+        <td>${escapeHtml(wordVal)}</td>
+        <td>${escapeHtml(posVal)}<br><small style="color:var(--color-text-muted)">${escapeHtml(typeVal)}</small></td>
+        <td>${escapeHtml(meaningVal)}</td>
+        ${conjSummary}
+      `;
+      reviewList.appendChild(tr);
+    });
+  } else {
+    // Generic layout for custom CSV files!
+    COLUMN_KEYS.forEach(col => {
+      const th = document.createElement("th");
+      th.textContent = col.name;
+      headersRow.appendChild(th);
+    });
+    
+    const sortedPairs = [...gameState.matchedPairs].sort((a, b) => a.id - b.id);
+    
+    sortedPairs.forEach(word => {
+      const tr = document.createElement("tr");
+      COLUMN_KEYS.forEach(col => {
+        const td = document.createElement("td");
+        td.textContent = getColumnValue(word, col.key);
+        tr.appendChild(td);
+      });
+      reviewList.appendChild(tr);
+    });
+  }
 }
 
 function closeModal() {
@@ -675,82 +730,86 @@ function handleFileUpload(e) {
     try {
       let data = [];
       if (file.name.endsWith(".json")) {
-        // JSONファイルのパース
         const parsed = JSON.parse(text);
         if (!Array.isArray(parsed)) {
           throw new Error("JSONデータのルートは配列である必要があります。");
         }
-        // バリデーションとフォーマット変換
         data = parsed.map((item, idx) => {
-          if (!item.word || !item.type) {
-            throw new Error(`インデックス ${idx} のデータに 'word' または 'type' がありません。`);
-          }
-          return {
-            id: item.id || (idx + 1),
-            word: String(item.word).trim(),
-            meaning: String(item.meaning || "").trim(),
-            pos: String(item.pos || "").trim(),
-            type: String(item.type).trim(),
-            conjugations: {
-              mizen: String(item.conjugations?.mizen || "").trim(),
-              renyo: String(item.conjugations?.renyo || "").trim(),
-              shushi: String(item.conjugations?.shushi || "").trim(),
-              rentai: String(item.conjugations?.rentai || "").trim(),
-              izen: String(item.conjugations?.izen || "").trim(),
-              meirei: String(item.conjugations?.meirei || "").trim()
-            }
+          const flatObj = {
+            id: item.id || (idx + 1)
           };
+          
+          Object.keys(item).forEach(key => {
+            if (key === "id") return;
+            if (key === "conjugations" && item.conjugations && typeof item.conjugations === "object") {
+              flatObj.conjugations = {};
+              Object.keys(item.conjugations).forEach(cKey => {
+                flatObj[cKey] = String(item.conjugations[cKey]).trim();
+                flatObj.conjugations[cKey] = String(item.conjugations[cKey]).trim();
+              });
+            } else {
+              flatObj[key] = String(item[key]).trim();
+            }
+          });
+          
+          return flatObj;
         });
       } else {
-        // CSVファイルのパース
         const lines = parseCSV(text);
         if (lines.length < 2) {
           throw new Error("CSVファイルのデータ行が足りません。");
         }
         
-        // ヘッダー行をスキップしてデータ行を処理
+        const rawHeaders = lines[0].map(h => h.trim());
+        const idIdx = rawHeaders.findIndex(h => h.toLowerCase() === "id" || h.toLowerCase() === "ｉｄ");
+        
         for (let i = 1; i < lines.length; i++) {
           const row = lines[i];
-          // 行が空、または「単語（見出し語）」が空の行はスキップ
-          if (row.length < 2 || !row[1] || row[1].trim() === "") continue;
+          if (row.length === 0 || (row.length === 1 && row[0].trim() === "")) continue;
           
-          data.push({
-            id: row[0] ? Number(row[0]) : i,
-            word: row[1].trim(),
-            meaning: row[2] ? row[2].trim() : "",
-            pos: row[3] ? row[3].trim() : "",
-            type: row[4] ? row[4].trim() : "",
-            conjugations: {
-              mizen: row[5] ? row[5].trim() : "",
-              renyo: row[6] ? row[6].trim() : "",
-              shushi: row[7] ? row[7].trim() : "",
-              rentai: row[8] ? row[8].trim() : "",
-              izen: row[9] ? row[9].trim() : "",
-              meirei: row[10] ? row[10].trim() : ""
+          const wordObj = {
+            id: (idIdx !== -1 && row[idIdx]) ? Number(row[idIdx]) : i
+          };
+          
+          rawHeaders.forEach((header, colIdx) => {
+            const hLower = header.toLowerCase();
+            if (hLower === "id" || hLower === "ｉｄ") return;
+            
+            const val = row[colIdx] ? row[colIdx].trim() : "";
+            const mappedKey = mapHeaderToKey(header);
+            
+            if (["mizen", "renyo", "shushi", "rentai", "izen", "meirei"].includes(mappedKey)) {
+              if (!wordObj.conjugations) wordObj.conjugations = {};
+              wordObj.conjugations[mappedKey] = val;
             }
+            wordObj[mappedKey] = val;
           });
+          
+          const keys = Object.keys(wordObj).filter(k => k !== "id" && k !== "conjugations");
+          if (keys.length > 0 && keys.some(k => wordObj[k] !== "")) {
+            data.push(wordObj);
+          }
         }
       }
       
       if (data.length === 0) {
-        throw new Error("有効な用言データが読み込めませんでした。");
+        throw new Error("有効なデータが読み込めませんでした。");
       }
       
-      // グローバル変数の更新と保存
       kobunWords = data;
       localStorage.setItem("kobun-yogen-custom-data", JSON.stringify(data));
       localStorage.removeItem("kobun-yogen-gas-url");
-      dom.gasUrlInput.value = ""; // URL入力をクリア
+      dom.gasUrlInput.value = "";
       
       updateDataStatus(true, `ロード成功: アップロードされた${data.length}件のデータを使用中`, "success");
-      alert(`${data.length}件のカスタムデータを読み込みました！「稽古をはじめる」ボタンを押すとこのデータでゲームが始まります。`);
+      updateColumnsFromData(data);
+      alert(`${data.length}件のカスタムデータを読み込みました！「組み合わせ」項目がCSVにあわせて更新されました。「稽古をはじめる」ボタンを押すとゲームが始まります。`);
       
     } catch (error) {
       console.error("ファイル読み込みエラー:", error);
       alert(`ファイルの読み込みに失敗しました:\n${error.message}`);
     }
     
-    // 入力値をリセットして同じファイルを再選択できるようにする
     dom.uploadCsvInput.value = "";
   };
   
@@ -805,7 +864,7 @@ function escapeHtml(str) {
 }
 
 // --- 動的組み合わせ選択用の定義とヘルパー ---
-const COLUMN_KEYS = [
+const DEFAULT_COLUMN_KEYS = [
   { key: "word", name: "単語" },
   { key: "meaning", name: "意味" },
   { key: "pos", name: "品詞" },
@@ -817,6 +876,127 @@ const COLUMN_KEYS = [
   { key: "izen", name: "已然形" },
   { key: "meirei", name: "命令形" }
 ];
+
+let COLUMN_KEYS = [...DEFAULT_COLUMN_KEYS];
+
+// ヘッダー文字列から内部キーへのマッピング
+function mapHeaderToKey(header) {
+  if (!header) return "";
+  const h = header.toString().trim().toLowerCase();
+  if (h.includes("単語") || h.includes("見出し語") || h === "word") return "word";
+  if (h.includes("意味") || h.includes("現代語訳") || h.includes("訳") || h === "meaning") return "meaning";
+  if (h.includes("品詞") || h === "pos") return "pos";
+  if (h.includes("活用") || h.includes("種類") || h === "type") return "type";
+  if (h.includes("未然") || h === "mizen") return "mizen";
+  if (h.includes("連用") || h === "renyo") return "renyo";
+  if (h.includes("終止") || h === "shushi") return "shushi";
+  if (h.includes("連体") || h === "rentai") return "rentai";
+  if (h.includes("已然") || h === "izen") return "izen";
+  if (h.includes("命令") || h === "meirei") return "meirei";
+  return header.toString().trim(); // マッチしなければ元の文字列を使用
+}
+
+// ヘッダー配列を内部キー定義にマッピング
+function mapHeaders(headers) {
+  const mappedKeys = [];
+  const columnKeys = [];
+  
+  headers.forEach((header, index) => {
+    const hLower = header.toString().trim().toLowerCase();
+    if (hLower === "id" || hLower === "ｉｄ") return;
+    
+    let key = mapHeaderToKey(header);
+    if (mappedKeys.includes(key)) {
+      key = header;
+    }
+    if (mappedKeys.includes(key)) {
+      key = `${header}_${index}`;
+    }
+    
+    mappedKeys.push(key);
+    
+    let displayName = header;
+    if (key === "word" && header.includes("単語")) displayName = "単語";
+    if (key === "meaning" && header.includes("意味")) displayName = "意味";
+    if (key === "pos" && header.includes("品詞")) displayName = "品詞";
+    if (key === "type" && header.includes("活用")) displayName = "活用の種類";
+    
+    columnKeys.push({ key: key, name: displayName });
+  });
+  
+  return columnKeys;
+}
+
+// 読み込まれたデータセットから選択肢（COLUMN_KEYS）を動的に再構築する
+function updateColumnsFromData(data) {
+  if (!data || data.length === 0) {
+    COLUMN_KEYS = [...DEFAULT_COLUMN_KEYS];
+    renderColumnSelectButtons();
+    return;
+  }
+  
+  const firstItem = data[0];
+  const keys = Object.keys(firstItem).filter(k => k !== "id" && k !== "conjugations");
+  
+  if (firstItem.conjugations && typeof firstItem.conjugations === "object") {
+    Object.keys(firstItem.conjugations).forEach(k => {
+      if (!keys.includes(k)) {
+        keys.push(k);
+      }
+    });
+  }
+  
+  const newCols = [];
+  keys.forEach(k => {
+    const stdKey = mapHeaderToKey(k);
+    let displayName = k;
+    if (stdKey === "word" && k !== "word") displayName = "単語";
+    else if (stdKey === "meaning" && k !== "meaning") displayName = "意味";
+    else if (stdKey === "pos" && k !== "pos") displayName = "品詞";
+    else if (stdKey === "type" && k !== "type") displayName = "活用の種類";
+    else if (stdKey === "mizen" && k !== "mizen") displayName = "未然形";
+    else if (stdKey === "renyo" && k !== "renyo") displayName = "連用形";
+    else if (stdKey === "shushi" && k !== "shushi") displayName = "終止形";
+    else if (stdKey === "rentai" && k !== "rentai") displayName = "連体形";
+    else if (stdKey === "izen" && k !== "izen") displayName = "已然形";
+    else if (stdKey === "meirei" && k !== "meirei") displayName = "命令形";
+    
+    if (!newCols.some(c => c.key === k)) {
+      newCols.push({ key: k, name: displayName });
+    }
+  });
+  
+  if (newCols.length > 0) {
+    COLUMN_KEYS = newCols;
+  } else {
+    COLUMN_KEYS = [...DEFAULT_COLUMN_KEYS];
+  }
+  
+  // 以前の選択状態が新しいカラム一覧になければリセット
+  const hasA = COLUMN_KEYS.some(c => c.key === gameState.sideAColumn);
+  const hasB = COLUMN_KEYS.some(c => c.key === gameState.sideBColumn);
+  
+  if (!hasA) {
+    gameState.sideAColumn = COLUMN_KEYS[0] ? COLUMN_KEYS[0].key : "word";
+  }
+  if (!hasB) {
+    const typeCol = COLUMN_KEYS.find(c => c.key === "type" || c.key.includes("活用"));
+    if (typeCol) {
+      gameState.sideBColumn = typeCol.key;
+    } else {
+      gameState.sideBColumn = COLUMN_KEYS[1] ? COLUMN_KEYS[1].key : (COLUMN_KEYS[0] ? COLUMN_KEYS[0].key : "type");
+    }
+  }
+  
+  if (gameState.sideAColumn === gameState.sideBColumn && COLUMN_KEYS.length > 1) {
+    const alternative = COLUMN_KEYS.find(c => c.key !== gameState.sideAColumn);
+    if (alternative) {
+      gameState.sideBColumn = alternative.key;
+    }
+  }
+  
+  renderColumnSelectButtons();
+}
 
 // カラム選択ボタンの動的生成
 function renderColumnSelectButtons() {
