@@ -1,29 +1,29 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&family=Outfit:wght@400;500;600;700;800&display=swap');
 
-/* CSS Variables - ポップ＆ネオン グラスモルフィズムパレット */
+/* CSS Variables - 可愛くて優しいパステル＆ポップカラーパレット */
 :root {
-  --color-bg: #090b16;            /* ディープ宇宙ブラック */
-  --color-panel-bg: rgba(18, 22, 45, 0.65); /* 半透明ガラスパネル */
-  --color-primary: #ff007f;       /* ネオンピンク */
-  --color-primary-light: #ff4da6;
-  --color-secondary: #00f2fe;     /* ネオンシアン */
-  --color-secondary-hover: #4facfe;
-  --color-accent: #7f00ff;        /* ネオンバイオレット */
-  --color-accent-light: #a64dff;
+  --color-bg: #f0f9ff;            /* 優しいパステルスカイブルー */
+  --color-panel-bg: rgba(255, 255, 255, 0.75); /* ふんわり白いガラスパネル */
+  --color-primary: #ec4899;       /* ビスケットピンク */
+  --color-primary-light: #f472b6;
+  --color-secondary: #0ea5e9;     /* シャーベットブルー */
+  --color-secondary-hover: #38bdf8;
+  --color-accent: #8b5cf6;        /* ラベンダーパープル */
+  --color-accent-light: #a78bfa;
   
-  --color-text: #f3f4f6;          /* クールグレーホワイト */
-  --color-text-muted: #8fa0dd;    /* ラベンダーブルーグレー */
+  --color-text: #334155;          /* マイルドなスレートグレー */
+  --color-text-muted: #64748b;    /* 薄いグレー */
   
-  --color-card-bg-front: rgba(255, 255, 255, 0.95); /* カード表面（超クリーンな白） */
-  --color-card-text: #0f172a;     /* スレートブラック */
-  --color-border: rgba(255, 255, 255, 0.08);       /* グラス境界線 */
-  --color-border-glow: rgba(0, 242, 254, 0.3);
+  --color-card-bg-front: #ffffff;  /* カード表面（真っ白） */
+  --color-card-text: #1e293b;     /* ダークスレート */
+  --color-border: rgba(255, 255, 255, 0.6);       /* 白い境界線 */
+  --color-border-glow: rgba(14, 165, 233, 0.2);
   
-  --font-sans: 'Outfit', 'Noto Sans JP', 'Inter', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Outfit', 'Fredoka', 'Noto Sans JP', system-ui, -apple-system, sans-serif;
   
-  --shadow-premium: 0 12px 40px 0 rgba(0, 0, 0, 0.6), 0 2px 10px rgba(127, 0, 255, 0.2);
-  --shadow-glow-pink: 0 0 20px rgba(255, 0, 127, 0.4);
-  --shadow-glow-cyan: 0 0 20px rgba(0, 242, 254, 0.4);
+  --shadow-premium: 0 10px 30px rgba(15, 23, 42, 0.06), 0 1px 3px rgba(0, 0, 0, 0.02);
+  --shadow-glow-pink: 0 4px 15px rgba(236, 72, 153, 0.25);
+  --shadow-glow-cyan: 0 4px 15px rgba(14, 165, 233, 0.25);
   
   --transition-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   --transition-bounce: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -47,7 +47,7 @@ body {
   overflow-x: hidden;
 }
 
-/* ネオンライト風のオーラ背景 */
+/* パステル調の浮遊オーラ背景 */
 .pattern-bg {
   position: fixed;
   top: 0;
@@ -55,41 +55,57 @@ body {
   width: 100vw;
   height: 100vh;
   z-index: -2;
-  background: radial-gradient(circle at 10% 20%, rgba(127, 0, 255, 0.12) 0%, transparent 40%),
-              radial-gradient(circle at 90% 80%, rgba(0, 242, 254, 0.1) 0%, transparent 45%),
-              radial-gradient(circle at 50% 50%, rgba(255, 0, 127, 0.07) 0%, transparent 50%),
-              #070814;
+  background: linear-gradient(135deg, #e0f2fe 0%, #f3e8ff 50%, #fce7f3 100%);
 }
 
-/* 背景にゆっくり回転するオーラを追加 */
-.pattern-bg::before {
+/* ふんわり浮遊するパステルサークル */
+.pattern-bg::before,
+.pattern-bg::after {
   content: '';
   position: absolute;
-  top: 25%;
-  left: 30%;
-  width: 45vw;
-  height: 45vw;
-  background: var(--color-accent);
   border-radius: 50%;
-  filter: blur(160px);
-  opacity: 0.12;
-  animation: float-aura 15s infinite alternate ease-in-out;
+  filter: blur(120px);
+  opacity: 0.55;
   z-index: -1;
 }
 
-@keyframes float-aura {
+.pattern-bg::before {
+  top: 15%;
+  left: 10%;
+  width: 40vw;
+  height: 40vw;
+  background: #bae6fd; /* 水色サークル */
+  animation: float-circle-1 25s infinite alternate ease-in-out;
+}
+
+.pattern-bg::after {
+  bottom: 10%;
+  right: 10%;
+  width: 45vw;
+  height: 45vw;
+  background: #fbcfe8; /* ピンクサークル */
+  animation: float-circle-2 28s infinite alternate ease-in-out;
+}
+
+@keyframes float-circle-1 {
   0% { transform: translate(0, 0) scale(1); }
-  100% { transform: translate(10%, -8%) scale(1.1); }
+  100% { transform: translate(8%, -6%) scale(1.1); }
+}
+
+@keyframes float-circle-2 {
+  0% { transform: translate(0, 0) scale(1); }
+  100% { transform: translate(-8%, 6%) scale(1.05); }
 }
 
 /* Header Styles */
 header {
-  background: rgba(9, 11, 22, 0.4);
+  background: rgba(255, 255, 255, 0.45);
   border-bottom: 1px solid var(--color-border);
-  padding: 25px 20px;
+  padding: 20px;
   text-align: center;
   backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  -webkit-backdrop-filter: blur(10px);
+  box-shadow: 0 4px 15px rgba(15, 23, 42, 0.02);
 }
 
 .header-container {
@@ -98,32 +114,30 @@ header {
 }
 
 h1 {
-  font-size: 2.4rem;
+  font-size: 2.1rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
-  background: linear-gradient(135deg, #00f2fe 0%, #ff007f 100%);
+  letter-spacing: -0.01em;
+  background: linear-gradient(135deg, #0284c7 0%, #ec4899 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
-  filter: drop-shadow(0 2px 8px rgba(127, 0, 255, 0.3));
 }
 
 h1 i {
-  background: linear-gradient(135deg, #00f2fe 0%, #ff007f 100%);
+  background: linear-gradient(135deg, #0284c7 0%, #ec4899 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
 .subtitle {
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 0.95rem;
+  font-weight: 600;
   color: var(--color-text-muted);
-  margin-top: 8px;
-  letter-spacing: 0.05em;
-  opacity: 0.9;
+  margin-top: 6px;
+  letter-spacing: 0.02em;
 }
 
 /* Main Container */
@@ -132,17 +146,17 @@ h1 i {
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
-  padding: 30px 20px;
+  padding: 25px 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
 
-/* Glassmorphic Panel */
+/* Cute Glassmorphic Panel */
 .card-panel {
   background: var(--color-panel-bg);
   border: 1px solid var(--color-border);
-  border-radius: 24px;
+  border-radius: 28px;
   padding: 35px;
   box-shadow: var(--shadow-premium);
   position: relative;
@@ -151,26 +165,26 @@ h1 i {
   overflow: hidden;
 }
 
-/* サイバー発光ボーダー装飾 */
+/* パステルストライプのトップ装飾 */
 .card-panel::before {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, var(--color-secondary), var(--color-accent), var(--color-primary));
+  height: 6px;
+  background: linear-gradient(90deg, #38bdf8, #818cf8, #f472b6);
 }
 
 .panel-header {
   margin-bottom: 25px;
-  border-bottom: 1px solid var(--color-border);
-  padding-bottom: 15px;
+  border-bottom: 1.5px dashed rgba(100, 116, 139, 0.15);
+  padding-bottom: 12px;
 }
 
 .panel-header h2 {
   color: var(--color-text);
-  font-size: 1.5rem;
+  font-size: 1.35rem;
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -183,32 +197,31 @@ h1 i {
 
 /* Form Styles */
 .form-group {
-  margin-bottom: 25px;
+  margin-bottom: 22px;
 }
 
 label {
   display: block;
-  font-size: 0.95rem;
-  font-weight: 600;
-  margin-bottom: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 8px;
   color: var(--color-text);
-  letter-spacing: 0.02em;
 }
 
 label i {
-  color: var(--color-primary-light);
+  color: var(--color-primary);
   margin-right: 6px;
 }
 
 input[type="url"],
 select {
   width: 100%;
-  padding: 14px 18px;
-  background-color: rgba(9, 11, 22, 0.7);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
+  padding: 13px 16px;
+  background-color: rgba(255, 255, 255, 0.7);
+  border: 2px solid rgba(15, 23, 42, 0.06);
+  border-radius: 14px;
   color: var(--color-text);
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-family: var(--font-sans);
   transition: var(--transition-smooth);
 }
@@ -216,15 +229,15 @@ select {
 input[type="url"]:focus,
 select:focus {
   outline: none;
-  border-color: var(--color-secondary);
-  box-shadow: 0 0 15px rgba(0, 242, 254, 0.2);
-  background-color: rgba(9, 11, 22, 0.9);
+  border-color: var(--color-secondary-hover);
+  box-shadow: 0 0 12px rgba(14, 165, 233, 0.15);
+  background-color: #ffffff;
 }
 
 .grid-2col {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 24px;
+  gap: 20px;
 }
 
 @media (max-width: 768px) {
@@ -234,12 +247,12 @@ select:focus {
   }
 }
 
-/* Segmented Control (Pill Switch) */
+/* Segmented Control (Pill Button Switch) */
 .segmented-control {
   display: flex;
-  background-color: rgba(9, 11, 22, 0.7);
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
+  background-color: rgba(255, 255, 255, 0.75);
+  border: 2px solid rgba(15, 23, 42, 0.05);
+  border-radius: 14px;
   overflow: hidden;
   padding: 4px;
 }
@@ -251,26 +264,26 @@ select:focus {
 .segmented-control .control-btn {
   flex: 1;
   text-align: center;
-  padding: 12px;
+  padding: 11px;
   margin: 0;
-  font-size: 0.9rem;
-  font-weight: 600;
+  font-size: 0.85rem;
+  font-weight: 700;
   cursor: pointer;
-  border-radius: 8px;
-  transition: var(--transition-smooth);
+  border-radius: 10px;
+  transition: var(--transition-bounce);
   border: none;
   background: transparent;
   color: var(--color-text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .segmented-control input[type="radio"]:checked + .control-btn {
-  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-primary) 100%);
-  color: var(--color-text);
-  box-shadow: var(--shadow-glow-pink);
+  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary-hover) 100%);
+  color: #ffffff;
+  box-shadow: var(--shadow-glow-cyan);
 }
 
 /* Tooltip */
@@ -290,11 +303,11 @@ select:focus {
 .tooltip-text {
   visibility: hidden;
   width: 260px;
-  background-color: #121528;
+  background-color: #ffffff;
   color: var(--color-text);
   text-align: left;
-  border: 1px solid var(--color-border);
-  border-radius: 10px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 12px;
   padding: 12px;
   position: absolute;
   z-index: 100;
@@ -305,7 +318,7 @@ select:focus {
   transition: opacity 0.3s, transform 0.3s;
   font-size: 0.8rem;
   line-height: 1.45;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+  box-shadow: 0 8px 25px rgba(15, 23, 42, 0.08);
   pointer-events: none;
 }
 
@@ -317,7 +330,7 @@ select:focus {
   margin-left: -5px;
   border-width: 5px;
   border-style: solid;
-  border-color: #121528 transparent transparent transparent;
+  border-color: #ffffff transparent transparent transparent;
 }
 
 .tooltip-trigger:hover .tooltip-text {
@@ -339,37 +352,37 @@ select:focus {
   padding: 8px 16px;
   border-radius: 30px;
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .info-badge {
-  background-color: rgba(0, 242, 254, 0.1);
+  background-color: rgba(14, 165, 233, 0.08);
   color: var(--color-secondary);
-  border: 1px solid rgba(0, 242, 254, 0.25);
+  border: 1.5px solid rgba(14, 165, 233, 0.2);
 }
 
 .success-badge {
-  background-color: rgba(16, 185, 129, 0.1);
+  background-color: rgba(16, 185, 129, 0.08);
   color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.25);
+  border: 1.5px solid rgba(16, 185, 129, 0.2);
 }
 
 .secondary-badge {
-  background: linear-gradient(135deg, rgba(0, 242, 254, 0.1) 0%, rgba(255, 0, 127, 0.1) 100%);
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.05) 0%, rgba(236, 72, 153, 0.05) 100%);
   color: var(--color-text);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 4px 10px rgba(127, 0, 255, 0.1);
+  border: 1.5px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.02);
 }
 
-/* Buttons */
+/* Cute Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  padding: 12px 24px;
-  border-radius: 12px;
-  font-size: 0.95rem;
+  padding: 12px 22px;
+  border-radius: 14px;
+  font-size: 0.9rem;
   font-weight: 700;
   cursor: pointer;
   transition: var(--transition-bounce);
@@ -377,58 +390,58 @@ select:focus {
 }
 
 .btn:active {
-  transform: scale(0.96);
+  transform: scale(0.95);
 }
 
 .primary-btn {
-  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-accent) 100%);
-  color: var(--color-text);
-  box-shadow: 0 4px 20px rgba(255, 0, 127, 0.35);
+  background: linear-gradient(135deg, var(--color-primary) 0%, #db2777 100%);
+  color: #ffffff;
+  box-shadow: var(--shadow-glow-pink);
 }
 
 .primary-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(255, 0, 127, 0.55);
+  box-shadow: 0 6px 20px rgba(236, 72, 153, 0.45);
 }
 
 .secondary-btn {
-  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-secondary-hover) 100%);
-  color: #070814;
-  box-shadow: 0 4px 20px rgba(0, 242, 254, 0.3);
+  background: linear-gradient(135deg, var(--color-secondary) 0%, #0284c7 100%);
+  color: #ffffff;
+  box-shadow: var(--shadow-glow-cyan);
 }
 
 .secondary-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 25px rgba(0, 242, 254, 0.5);
+  box-shadow: 0 6px 20px rgba(14, 165, 233, 0.45);
 }
 
 .outline-btn {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.6);
   color: var(--color-text);
-  border: 1px solid var(--color-border);
+  border: 2px solid rgba(15, 23, 42, 0.06);
 }
 
 .outline-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-color: rgba(255, 255, 255, 0.3);
+  background-color: #ffffff;
+  border-color: var(--color-secondary-hover);
   transform: translateY(-1px);
 }
 
 .large-btn {
   padding: 16px 36px;
-  font-size: 1.1rem;
-  border-radius: 16px;
+  font-size: 1.05rem;
+  border-radius: 18px;
 }
 
 .action-area {
   display: flex;
   justify-content: center;
-  margin-top: 35px;
+  margin-top: 30px;
 }
 
 /* Game Playing Screen Header */
 .game-header {
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1.5px dashed rgba(100, 116, 139, 0.15);
   padding-bottom: 20px;
   margin-bottom: 25px;
 }
@@ -436,14 +449,14 @@ select:focus {
 .scoreboard {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
+  gap: 15px;
   margin-bottom: 20px;
 }
 
 @media (max-width: 600px) {
   .scoreboard {
     flex-direction: column;
-    gap: 12px;
+    gap: 10px;
   }
 }
 
@@ -451,57 +464,62 @@ select:focus {
   flex: 1;
   display: flex;
   align-items: center;
-  gap: 15px;
-  background-color: rgba(9, 11, 22, 0.6);
-  border: 1px solid var(--color-border);
-  padding: 12px 20px;
-  border-radius: 16px;
+  gap: 12px;
+  background-color: rgba(255, 255, 255, 0.65);
+  border: 2px solid rgba(15, 23, 42, 0.04);
+  padding: 12px 18px;
+  border-radius: 18px;
   transition: var(--transition-bounce);
 }
 
 .player-score.active {
-  border-color: var(--color-secondary);
-  background-color: rgba(0, 242, 254, 0.08);
-  box-shadow: 0 0 20px rgba(0, 242, 254, 0.15);
+  background-color: #ffffff;
   transform: translateY(-2px);
 }
 
-/* プレイヤー1がアクティブな場合はネオンピンク、プレイヤー2はネオンシアン */
 #p1-score-card.active {
-  border-color: var(--color-primary);
-  background-color: rgba(255, 0, 127, 0.08);
-  box-shadow: 0 0 20px rgba(255, 0, 127, 0.15);
+  border-color: var(--color-primary-light);
+  box-shadow: 0 6px 15px rgba(236, 72, 153, 0.12);
+}
+
+#p2-score-card.active {
+  border-color: var(--color-secondary-hover);
+  box-shadow: 0 6px 15px rgba(14, 165, 233, 0.12);
 }
 
 .time-card {
-  border-color: rgba(127, 0, 255, 0.3);
-  background-color: rgba(127, 0, 255, 0.05);
+  border-color: rgba(139, 92, 246, 0.15);
+  background-color: rgba(139, 92, 246, 0.04);
 }
 
 .player-avatar {
-  font-size: 1.4rem;
-  color: var(--color-secondary);
+  font-size: 1.3rem;
+  color: var(--color-text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
-  background-color: rgba(7, 8, 20, 0.8);
+  width: 40px;
+  height: 40px;
+  background-color: #f8fafc;
   border-radius: 12px;
-  border: 1px solid var(--color-border);
+  border: 1.5px solid rgba(15, 23, 42, 0.05);
 }
 
 #p1-score-card .player-avatar {
-  color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+#p2-score-card .player-avatar {
+  color: var(--color-secondary);
 }
 
 #p1-score-card.active .player-avatar {
-  box-shadow: var(--shadow-glow-pink);
+  background-color: rgba(236, 72, 153, 0.08);
   border-color: var(--color-primary);
 }
 
 #p2-score-card.active .player-avatar {
-  box-shadow: var(--shadow-glow-cyan);
+  background-color: rgba(14, 165, 233, 0.08);
   border-color: var(--color-secondary);
 }
 
@@ -512,7 +530,7 @@ select:focus {
 
 .player-name {
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-muted);
 }
 
@@ -521,40 +539,35 @@ select:focus {
 }
 
 .player-points {
-  font-size: 1.25rem;
+  font-size: 1.15rem;
   font-weight: 800;
   margin-top: 2px;
-}
-
-.player-points span {
-  color: var(--color-text);
 }
 
 .game-status-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: rgba(9, 11, 22, 0.4);
-  padding: 12px 20px;
-  border-radius: 12px;
-  border: 1px solid var(--color-border);
+  background-color: rgba(255, 255, 255, 0.5);
+  padding: 10px 18px;
+  border-radius: 14px;
+  border: 1.5px solid rgba(15, 23, 42, 0.04);
 }
 
 .announcement {
   color: var(--color-text);
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
+  font-size: 0.9rem;
+  font-weight: 700;
 }
 
 /* Card Grid Styles */
 .card-grid {
   display: grid;
   gap: 15px;
-  margin-bottom: 30px;
+  margin-bottom: 25px;
 }
 
-/* ペア数に応じたグリッド自動調整 */
+/* Grid configurations */
 .grid-6-pairs { grid-template-columns: repeat(4, 1fr); }
 .grid-10-pairs { grid-template-columns: repeat(5, 1fr); }
 .grid-15-pairs { grid-template-columns: repeat(6, 1fr); }
@@ -586,24 +599,24 @@ select:focus {
   width: 100%;
   height: 100%;
   text-align: center;
-  transition: transform 0.6s cubic-bezier(0.25, 1, 0.33, 1);
+  transition: transform 0.6s cubic-bezier(0.2, 0.85, 0.35, 1.2);
   transform-style: preserve-3d;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-  border-radius: 14px;
+  box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
+  border-radius: 18px;
 }
 
-/* ホバー時にわずかに浮き上がる */
+/* Hover effect */
 .card-item:hover .card-inner {
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.6);
-  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+  transform: translateY(-4px) scale(1.03);
 }
 
-/* めくられた状態 */
+/* Card flipped state */
 .card-item.flipped .card-inner {
   transform: rotateY(180deg);
 }
 
-/* マッチして獲得された状態 */
+/* Card matched state */
 .card-item.matched {
   cursor: default;
   pointer-events: none;
@@ -611,12 +624,12 @@ select:focus {
 
 .card-item.matched .card-inner {
   transform: rotateY(180deg);
-  box-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+  box-shadow: 0 0 18px rgba(14, 165, 233, 0.2);
 }
 
 .card-item.matched-fade .card-inner {
-  opacity: 0.35;
-  transform: rotateY(180deg) scale(0.92);
+  opacity: 0.45;
+  transform: rotateY(180deg) scale(0.94);
   transition: opacity 0.8s ease-out, transform 0.8s ease-out;
 }
 
@@ -626,21 +639,21 @@ select:focus {
   height: 100%;
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
-  border-radius: 14px;
+  border-radius: 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 12px;
+  padding: 10px;
   box-sizing: border-box;
   overflow: hidden;
 }
 
-/* カードの裏面：サイバーホログラム風 */
+/* Cute card back: pastel gradient with grid */
 .card-back {
-  background: linear-gradient(135deg, #180d2c 0%, #080512 100%);
-  border: 2px solid rgba(127, 0, 255, 0.3);
-  color: var(--color-secondary);
+  background: linear-gradient(135deg, #7dd3fc 0%, #c084fc 100%);
+  border: 3px solid #ffffff;
+  color: #ffffff;
 }
 
 .card-back::before {
@@ -650,59 +663,57 @@ select:focus {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 50% 50%, rgba(255, 0, 127, 0.08) 0%, transparent 80%);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.15) 15%, transparent 15%);
+  background-size: 8px 8px;
 }
 
 .card-back-pattern {
-  font-size: 2.2rem;
-  animation: float-back-icon 4s infinite ease-in-out;
-  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  filter: drop-shadow(0 0 8px rgba(0, 242, 254, 0.3));
+  font-size: 2.1rem;
+  animation: float-cute-icon 3s infinite ease-in-out;
+  color: #ffffff;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.1));
 }
 
-@keyframes float-back-icon {
-  0% { transform: translateY(0) scale(1); }
-  50% { transform: translateY(-4px) scale(1.05); }
-  100% { transform: translateY(0) scale(1); }
+@keyframes float-cute-icon {
+  0% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-3px) rotate(3deg); }
+  100% { transform: translateY(0) rotate(0deg); }
 }
 
-/* カードの表面：グラスモルフィック紙風 */
+/* Clean, friendly card front */
 .card-front {
   background-color: var(--color-card-bg-front);
   transform: rotateY(180deg);
-  border: 3px solid #f3f4f6;
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+  border: 3px solid #ffffff;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.02);
 }
 
-/* カードA面・B面の色表示バッジ */
+/* Side A/B labels */
 .card-type-badge {
   position: absolute;
   top: 8px;
   left: 8px;
   font-size: 0.65rem;
-  font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 6px;
-  text-transform: uppercase;
+  font-weight: 800;
+  padding: 3px 7px;
+  border-radius: 7px;
 }
 
 .badge-word {
-  background-color: rgba(255, 0, 127, 0.12);
-  color: var(--color-primary);
-  border: 1px solid rgba(255, 0, 127, 0.2);
+  background-color: #fce7f3;
+  color: #db2777;
+  border: 1px solid rgba(219, 39, 119, 0.1);
 }
 
 .badge-type {
-  background-color: rgba(0, 242, 254, 0.12);
-  color: #0088cc;
-  border: 1px solid rgba(0, 242, 254, 0.2);
+  background-color: #e0f2fe;
+  color: #0369a1;
+  border: 1px solid rgba(3, 105, 161, 0.1);
 }
 
-/* カード中央のテキスト */
+/* Central card text */
 .card-text {
-  font-size: 1.15rem;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--color-card-text);
   line-height: 1.35;
@@ -714,24 +725,23 @@ select:focus {
   flex: 1;
 }
 
-/* 長いテキストの自動縮小 */
 .card-text.text-long {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   line-height: 1.25;
 }
 
-/* カード下のメタ情報 */
+/* Footer card info */
 .card-front-footer {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: #64748b;
-  border-top: 1px solid #e2e8f0;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--color-text-muted);
+  border-top: 1.5px dashed rgba(15, 23, 42, 0.05);
   width: 100%;
   padding-top: 6px;
   text-align: center;
 }
 
-/* Game Control Buttons */
+/* Game Controls */
 .game-controls {
   display: flex;
   justify-content: space-between;
@@ -739,7 +749,7 @@ select:focus {
   margin-top: 20px;
 }
 
-/* 組み合わせ選択部分のボタングループ */
+/* Column selector group */
 .button-group-wrap {
   display: flex;
   flex-wrap: wrap;
@@ -748,30 +758,30 @@ select:focus {
 
 .column-btn {
   padding: 8px 14px;
-  background-color: rgba(255, 255, 255, 0.04);
-  border: 1px solid var(--color-border);
-  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 2px solid rgba(15, 23, 42, 0.05);
+  border-radius: 10px;
   color: var(--color-text-muted);
   font-size: 0.8rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
   transition: var(--transition-smooth);
 }
 
 .column-btn:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.25);
+  background-color: #ffffff;
+  border-color: rgba(15, 23, 42, 0.15);
   color: var(--color-text);
 }
 
 .column-btn.active {
-  background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-primary) 100%);
+  background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-light) 100%);
   border-color: transparent;
-  color: var(--color-text);
-  box-shadow: 0 4px 12px rgba(255, 0, 127, 0.25);
+  color: #ffffff;
+  box-shadow: var(--shadow-glow-pink);
 }
 
-/* Dynamic Database Status Badges & Layout */
+/* Upload Buttons Row */
 .upload-row {
   display: flex;
   gap: 12px;
@@ -782,50 +792,50 @@ select:focus {
   flex: 1;
 }
 
-/* Results Overlay / Modal */
+/* Result Modal Overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(5, 6, 15, 0.85);
+  background-color: rgba(15, 23, 42, 0.25);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(8px);
 }
 
 .modal-content {
-  background: #0e1227;
-  border: 1.5px solid var(--color-border);
-  border-radius: 28px;
+  background: #ffffff;
+  border: 1.5px solid rgba(255,255,255,0.7);
+  border-radius: 32px;
   max-width: 650px;
   width: 90%;
   max-height: 85vh;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
   animation: modal-zoom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   overflow: hidden;
 }
 
 @keyframes modal-zoom {
-  0% { transform: scale(0.85); opacity: 0; }
+  0% { transform: scale(0.9); opacity: 0; }
   100% { transform: scale(1); opacity: 1; }
 }
 
 .modal-header {
   padding: 24px 30px;
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1.5px dashed rgba(100, 116, 139, 0.1);
   text-align: center;
 }
 
 .modal-header h2 {
-  font-size: 1.8rem;
+  font-size: 1.6rem;
   font-weight: 800;
-  background: linear-gradient(135deg, #00f2fe 0%, #ff007f 100%);
+  background: linear-gradient(135deg, var(--color-secondary) 0%, var(--color-primary) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -840,79 +850,79 @@ select:focus {
   text-align: center;
   margin-bottom: 25px;
   padding: 15px;
-  background: linear-gradient(135deg, rgba(255, 0, 127, 0.15) 0%, rgba(127, 0, 255, 0.15) 100%);
-  border-radius: 16px;
-  border: 1px dashed var(--color-primary);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.06) 0%, rgba(14, 165, 233, 0.06) 100%);
+  border-radius: 18px;
+  border: 2px dashed rgba(236, 72, 153, 0.25);
 }
 
 .victory-banner i {
-  font-size: 2.2rem;
-  margin-bottom: 8px;
+  font-size: 2rem;
+  margin-bottom: 6px;
   animation: bounce-trophy 2s infinite ease-in-out;
 }
 
 .gold-crown {
   color: #ffb900;
-  filter: drop-shadow(0 0 10px rgba(255, 185, 0, 0.5));
+  filter: drop-shadow(0 2px 5px rgba(255, 185, 0, 0.3));
 }
 
 @keyframes bounce-trophy {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+  50% { transform: translateY(-4px); }
 }
 
 .victory-banner p {
-  font-size: 1.15rem;
-  font-weight: 700;
+  font-size: 1.05rem;
+  font-weight: 800;
   color: var(--color-text);
 }
 
 .stats-summary {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 15px;
-  margin-bottom: 30px;
+  gap: 12px;
+  margin-bottom: 25px;
 }
 
 .stat-box {
-  background-color: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--color-border);
-  border-radius: 16px;
-  padding: 15px;
+  background-color: rgba(15, 23, 42, 0.02);
+  border: 2px solid rgba(15, 23, 42, 0.03);
+  border-radius: 18px;
+  padding: 12px;
   text-align: center;
   transition: var(--transition-smooth);
 }
 
 .stat-box:hover {
-  background-color: rgba(255, 255, 255, 0.06);
-  border-color: rgba(127, 0, 255, 0.3);
+  background-color: rgba(14, 165, 233, 0.03);
+  border-color: rgba(14, 165, 233, 0.15);
 }
 
 .stat-label {
   display: block;
   font-size: 0.75rem;
-  font-weight: 600;
+  font-weight: 700;
   color: var(--color-text-muted);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .stat-value {
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   font-weight: 800;
   color: var(--color-secondary);
 }
 
-/* Results Review Area */
+/* Results Review table */
 .review-section {
-  border-top: 1px solid var(--color-border);
+  border-top: 1.5px dashed rgba(100, 116, 139, 0.1);
   padding-top: 25px;
 }
 
 .review-section h3 {
-  font-size: 1.05rem;
-  font-weight: 700;
+  font-size: 0.95rem;
+  font-weight: 800;
   color: var(--color-text);
-  margin-bottom: 15px;
+  margin-bottom: 12px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -924,36 +934,36 @@ select:focus {
 
 .review-table-wrapper {
   overflow-x: auto;
-  border-radius: 12px;
-  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  border: 1.5px solid rgba(15, 23, 42, 0.05);
 }
 
 .review-table {
   width: 100%;
   border-collapse: collapse;
   text-align: left;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
 }
 
 .review-table th,
 .review-table td {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--color-border);
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.05);
 }
 
 .review-table th {
-  background-color: rgba(255, 255, 255, 0.05);
-  font-weight: 700;
+  background-color: rgba(15, 23, 42, 0.02);
+  font-weight: 800;
   color: var(--color-text);
 }
 
 .review-table tbody tr {
-  background-color: rgba(9, 11, 22, 0.3);
+  background-color: #ffffff;
   transition: var(--transition-smooth);
 }
 
 .review-table tbody tr:hover {
-  background-color: rgba(255, 255, 255, 0.03);
+  background-color: rgba(14, 165, 233, 0.02);
 }
 
 .review-table tbody tr:last-child td {
@@ -961,23 +971,23 @@ select:focus {
 }
 
 .modal-footer {
-  padding: 20px 30px;
-  border-top: 1px solid var(--color-border);
+  padding: 18px 24px;
+  border-top: 1.5px dashed rgba(100, 116, 139, 0.1);
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  background-color: rgba(9, 11, 22, 0.4);
+  gap: 10px;
+  background-color: rgba(15, 23, 42, 0.01);
 }
 
 /* Footer */
 footer {
-  background-color: rgba(7, 8, 20, 0.85);
+  background-color: rgba(255, 255, 255, 0.55);
   border-top: 1px solid var(--color-border);
-  padding: 25px;
+  padding: 20px;
   text-align: center;
   font-size: 0.8rem;
   color: var(--color-text-muted);
-  backdrop-filter: blur(10px);
+  backdrop-filter: blur(8px);
 }
 
 .footer-container {
@@ -991,14 +1001,14 @@ footer {
 @media (max-width: 600px) {
   .footer-container {
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
   }
 }
 
 .github-link a {
   color: var(--color-text-muted);
   text-decoration: none;
-  font-weight: 600;
+  font-weight: 700;
   transition: var(--transition-smooth);
   display: flex;
   align-items: center;
@@ -1009,18 +1019,18 @@ footer {
   color: var(--color-secondary);
 }
 
-/* Custom Scrollbar */
+/* Custom Scrollbar styling */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
 }
 ::-webkit-scrollbar-track {
-  background: rgba(9, 11, 22, 0.3);
+  background: rgba(15, 23, 42, 0.02);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-accent);
+  background: rgba(15, 23, 42, 0.15);
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-primary);
+  background: rgba(15, 23, 42, 0.3);
 }
